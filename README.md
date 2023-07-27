@@ -1,47 +1,215 @@
-# Copyright © 2019-2020 Hugo Locurcio and contributors - MIT License
-# See `LICENSE.md` included in the source distribution for details.
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
 
-extends Node
+config_version=4
 
-var screenshots_dir := (
-		OS.get_system_dir(OS.SYSTEM_DIR_PICTURES) +
-		"/" +
-		ProjectSettings.get_setting("application/config/name") as String
-)
+_global_script_classes=[ {
+"base": "RigidBody2D",
+"class": "Ball",
+"language": "GDScript",
+"path": "res://game/ball/ball.gd"
+}, {
+"base": "StaticBody2D",
+"class": "BallLauncher",
+"language": "GDScript",
+"path": "res://game/ball_launcher/ball_launcher.gd"
+}, {
+"base": "StaticBody2D",
+"class": "Brick",
+"language": "GDScript",
+"path": "res://game/brick/brick.gd"
+}, {
+"base": "StaticBody2D",
+"class": "Exit",
+"language": "GDScript",
+"path": "res://game/exit/exit.gd"
+}, {
+"base": "NinePatchRect",
+"class": "ForceField",
+"language": "GDScript",
+"path": "res://game/force_field/force_field.gd"
+}, {
+"base": "Node",
+"class": "Game",
+"language": "GDScript",
+"path": "res://game/game.gd"
+}, {
+"base": "Node",
+"class": "Goal",
+"language": "GDScript",
+"path": "res://game/goal/goal.gd"
+}, {
+"base": "RigidBody2D",
+"class": "Paddle",
+"language": "GDScript",
+"path": "res://game/paddle/paddle.gd"
+} ]
+_global_script_class_icons={
+"Ball": "",
+"BallLauncher": "",
+"Brick": "",
+"Exit": "",
+"ForceField": "",
+"Game": "",
+"Goal": "",
+"Paddle": ""
+}
 
+[application]
 
-func _ready() -> void:
-	# Make it possible to take screenshots while paused
-	pause_mode = PAUSE_MODE_PROCESS
+config/name="Escape Space"
+config/description="A top-down game featuring Pong, Breakout and pinball mechanics"
+run/main_scene="res://menu/menu.tscn"
+boot_splash/image="res://splash.png"
+boot_splash/bg_color=Color( 0, 0, 0, 1 )
+config/icon="res://icon.png"
+config/use_custom_user_dir.standalone=true
+config/custom_user_dir_name.X11="escape-space"
+config/custom_user_dir_name.OSX="escape-space"
+config/version="1.3.0-dev"
 
+[autoload]
 
-func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("take_screenshot"):
-		var directory := Directory.new()
-		directory.make_dir_recursive(screenshots_dir)
+Settings="*res://autoload/settings.gd"
+Music="*res://autoload/music.tscn"
+Sound="*res://autoload/sound.gd"
+ColorCorrection="*res://autoload/color_correction.tscn"
+Screenshot="*res://autoload/screenshot.gd"
+CommandLine="*res://autoload/command_line.gd"
 
-		get_viewport().set_clear_mode(Viewport.CLEAR_MODE_ONLY_NEXT_FRAME)
-		var image := get_viewport().get_texture().get_data()
+[debug]
 
-		# The viewport must be flipped to match the rendered window
-		image.flip_y()
+gdscript/warnings/return_value_discarded=false
 
-		get_viewport().set_clear_mode(Viewport.CLEAR_MODE_ALWAYS)
+[display]
 
-		# Screenshot file name with ISO 8601-like date
-		var datetime := OS.get_datetime()
-		for key in datetime:
-			datetime[key] = str(datetime[key]).pad_zeros(2)
+window/dpi/allow_hidpi=true
+window/vsync/use_vsync=false
+window/stretch/mode="2d"
+window/stretch/aspect="expand"
 
-		var screenshot_name := "/escape-space_{year}-{month}-{day}_{hour}.{minute}.{second}" \
-				.format(datetime)
+[editor_plugins]
 
-		var error := image.save_png(
-				screenshots_dir +
-				"/" +
-				screenshot_name +
-				".png"
-		)
+enabled=PoolStringArray( "res://addons/smoothing/plugin.cfg" )
 
-		if error != OK:
-			push_error("Couldn't save screenshot.")
+[input]
+
+ui_cancel={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777217,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+, Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":0,"button_index":1,"pressure":0.0,"pressed":false,"script":null)
+ ]
+}
+ui_focus_next={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777218,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+, Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":0,"button_index":13,"pressure":0.0,"pressed":false,"script":null)
+, Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":0,"axis":1,"axis_value":1.0,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777234,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+ui_focus_prev={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":true,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777218,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+, Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":0,"button_index":12,"pressure":0.0,"pressed":false,"script":null)
+, Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":0,"axis":1,"axis_value":-1.0,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777232,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+ui_left={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777231,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+, Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":0,"button_index":14,"pressure":0.0,"pressed":false,"script":null)
+, Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":0,"axis":0,"axis_value":-1.0,"script":null)
+ ]
+}
+ui_right={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777233,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+, Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":0,"button_index":15,"pressure":0.0,"pressed":false,"script":null)
+, Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":0,"axis":0,"axis_value":1.0,"script":null)
+ ]
+}
+ui_up={
+"deadzone": 0.5,
+"events": [  ]
+}
+ui_down={
+"deadzone": 0.5,
+"events": [  ]
+}
+move_left={
+"deadzone": 0.15,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777231,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+, Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":0,"axis":0,"axis_value":-1.0,"script":null)
+ ]
+}
+move_right={
+"deadzone": 0.15,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777233,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+, Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":0,"axis":0,"axis_value":1.0,"script":null)
+ ]
+}
+move_down={
+"deadzone": 0.15,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777234,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+, Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":0,"axis":1,"axis_value":1.0,"script":null)
+ ]
+}
+move_up={
+"deadzone": 0.15,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777232,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+, Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":0,"axis":1,"axis_value":-1.0,"script":null)
+ ]
+}
+toggle_fullscreen={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777254,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":true,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777221,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+toggle_hud={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777244,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+toggle_pause={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777217,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+, Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":0,"button_index":11,"pressure":0.0,"pressed":false,"script":null)
+ ]
+}
+take_screenshot={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777255,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+
+[layer_names]
+
+2d_physics/layer_1="Walls"
+2d_physics/layer_2="Bricks"
+2d_physics/layer_3="Paddles"
+2d_physics/layer_4="Balls"
+2d_physics/layer_5="Goals"
+
+[locale]
+
+translations=PoolStringArray( "res://locale/fr.po" )
+locale_filter=[ 0, [  ] ]
+
+[physics]
+
+common/physics_jitter_fix=0.0
+
+[rendering]
+
+quality/driver/driver_name="GLES2"
+quality/intended_usage/framebuffer_allocation=1
+quality/intended_usage/framebuffer_allocation.mobile=1
+environment/default_clear_color=Color( 0, 0, 0, 1 )
